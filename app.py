@@ -97,4 +97,31 @@ def change_data(id): #Update, delete data from data base
 		except(ConnectionError, Timeout, TooManyRedirects) as e:
 			print(e)
 	else:
-		pass
+		try:
+			conn = sqlite3.connect(database)
+			query ='''update sensor_readings
+								set channel_name=?,
+									sensor_name=?,
+									sensor_description=?,
+									sensor_unit=?,
+									sensor_reading=?,
+									reading_time=? where id=?
+							'''
+			form = request.get_json(force=True) 
+
+			params = (form['channel_name'],
+						form['sensor_name'],
+						form['sensor_description'],
+						form['sensor_unit'],
+						form['sensor_reading'],
+						datetime.now(),
+						id)
+			print(params)
+			cur = conn.cursor()
+			cur.execute(query,params)
+			data = cur.fetchall() 
+			conn.commit()
+			conn.close()
+			return form
+		except(ConnectionError, Timeout, TooManyRedirects) as e:
+			print(e)
