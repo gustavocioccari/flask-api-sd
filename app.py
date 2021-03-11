@@ -52,9 +52,6 @@ def control_data(): #Read, Create data from data base
 						'''
 		form = request.get_json(force=True) 
 
-		# value = json_data['channel_name']
-		# form = request.form['channel_name']
-		# print(form)
 		params = (form['channel_name'],
 					form['sensor_name'],
 					form['sensor_description'],
@@ -71,26 +68,33 @@ def control_data(): #Read, Create data from data base
 	except(ConnectionError, Timeout, TooManyRedirects) as e:
 		print(e)
 
-
-# @app.route('/reading/<id>',methods = ['PATCH','DELETE','GET'])
-# def change_data(): #Update, delete data from data base
-#    else:
-#    		try:
-# 			conn = sqlite3.connect(database)
-# 			query ='''select sensor_reading,sensor_unit from sensor_readings'''
-# 			cur = conn.cursor()
-# 			cur.execute(query)
-# 			data = cur.fetchall() 
-# 			conn.commit()
-# 			conn.close()
-# 			return json.dumps(data)
-# 		except(ConnectionError, Timeout, TooManyRedirects) as e:
-# 			print(e)
-# @app.route('/login',methods = ['POST', 'GET'])
-# def login():
-#    if request.method == 'POST':
-#     	user = request.form['nm']
-#       return redirect(url_for('success',name = user))
-#    else:
-#       user = request.args.get('nm')
-#       return redirect(url_for('success',name = user)
+@app.route('/reading/<id>',methods = ['PATCH','DELETE','GET'])
+def change_data(id): #Update, delete data from data base
+	if request.method == 'GET':
+		try:
+			conn = sqlite3.connect(database)
+			query ='''select * from sensor_readings where id=?'''
+			params = (id,)
+			cur = conn.cursor()
+			cur.execute(query,params)
+			data = cur.fetchall() 
+			conn.commit()
+			conn.close()
+			return json.dumps(data)
+		except(ConnectionError, Timeout, TooManyRedirects) as e:
+			print(e)
+	elif request.method == 'DELETE':
+		try:
+			conn = sqlite3.connect(database)
+			query ='''delete from sensor_readings where id=?'''
+			params = (id,)
+			cur = conn.cursor()
+			cur.execute(query,params)
+			data = cur.fetchall() 
+			conn.commit()
+			conn.close()
+			return 'deleted'
+		except(ConnectionError, Timeout, TooManyRedirects) as e:
+			print(e)
+	else:
+		pass
