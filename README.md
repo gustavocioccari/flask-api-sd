@@ -9,3 +9,5 @@ pip install -r requriments.tx
 ```
 flask run
 ```
+
+Project developed by: Gustavo Cioccari and Henrique Ternes
